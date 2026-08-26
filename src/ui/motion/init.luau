@@ -7,6 +7,7 @@ const Spring = require("@self/Spring")
 const Tween = require("@self/Tween")
 
 export type SpringConfig = Spring.Config
+export type AccelTweenConfig = AccelTween.Config
 export type TweenConfig = Tween.Config
 
 return table.freeze({

@@ -6,6 +6,7 @@
 include = [
     "src/ui/testing/**/*.spec.luau",
     "src/ui/motion/Easing.spec.luau",
+    "src/ui/motion/AccelTweenObject.spec.luau",
 ]
 
 [suites.roblox]

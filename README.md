@@ -37,7 +37,7 @@ rojo build default.project.json -o ui.rbxlx
 
 - `value`, `derive`, `peek`, `effect`, and `fromObservable` provide callable reactive values backed by Nightcycle Rx Observables.
 - `bind` resolves existing properties, events, and children. Its cleanup function owns the whole nested binding.
-- `spring`, `tween`, `impulse`, and `snap` use one motion scheduler. `accelTween` fails clearly because no authoritative AccelTween dependency was available.
+- `spring`, `accelTween`, `tween`, `impulse`, and `snap` use one motion scheduler. The acceleration tween vendors Nevermore's dependency-free analytic implementation.
 - `ease` contains the standard easing functions. `bezier(x1, y1, x2, y2)` creates a cubic Bézier easing function.
 - `to`, `wait`, `call`, `parallel`, `sequence`, and `play` are small tagged-data animation commands.
 - `expect` provides synchronous fluent assertions, including deep equality and negation through `.never`.

@@ -1,6 +1,7 @@
 --!strict
 
 const lest = require("@lest")
+const AccelTweenObject = require("./AccelTweenObject")
 const Easing = require("./Easing")
 const Interpolate = require("./Interpolate")
 const SpringObject = require("./SpringObject")
@@ -36,5 +37,20 @@ describe("motion", function(): ()
 		const curve = Easing.cubicBezier(0.42, 0, 0.58, 1)
 		expect(math.abs(curve(0)) <= 1e-6).toBe(true)
 		expect(math.abs(curve(1) - 1) <= 1e-6).toBe(true)
+	end)
+
+	it("preserves AccelTween position and velocity while retargeting", function(): ()
+		local now: number = 0
+		const tween = AccelTweenObject.new(4)
+		tween:SetClock(function(): number
+			return now
+		end)
+		tween:SetTarget(1)
+		expect(tween.rtime > 0).toBe(true)
+		now = tween.rtime / 2
+		expect(tween.p > 0).toBe(true)
+		expect(tween.v > 0).toBe(true)
+		tween:SetTarget(0)
+		expect(tween.rtime > 0).toBe(true)
 	end)
 end)
