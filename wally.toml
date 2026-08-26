@@ -1,0 +1,10 @@
+[package]
+name = "twistedsignal/ui"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Scythe = "synttx/scythe@1.2.2"
+Rx = "nightcycle/rx@3.7.3"
+Maid = "nightcycle/maid@2.2.2"
