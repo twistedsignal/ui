@@ -8,7 +8,11 @@ local Types = require("./Types")
 local Input = {}
 
 function Input.isValue(value: unknown): boolean
-	return type(value) == "table" and type((value :: any).observable) == "table" and getmetatable(value) ~= nil
+	if type(value) ~= "table" then
+		return false
+	end
+	const candidate = value :: { [string]: unknown }
+	return type(candidate.observable) == "table"
 end
 
 function Input.toObservable<T>(input: Types.Reactive<T>): Types.Observable<T>

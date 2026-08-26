@@ -9,12 +9,6 @@
       },
       "Packages": {
         "$path": "Packages"
-      },
-      "DevPackages": {
-        "$path": "DevPackages"
-      },
-      "Tests": {
-        "$path": "tests"
       }
     },
 

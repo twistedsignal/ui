@@ -28,8 +28,9 @@ const function isValue(value: unknown): boolean
 end
 
 const function assign(instance: Instance, property: string, value: unknown, path: string): ()
-	const success, reason = pcall(function(): ()
+	const success, reason = pcall(function(): boolean
 		(instance :: any)[property] = value
+		return true
 	end)
 	if not success then
 		error(`ui.bind: Could not assign property "{path}": {tostring(reason)}`, 0)
@@ -117,8 +118,9 @@ end
 const function bind(instance: Instance, tree: BindingTree): Cleanup
 	const cleanups: { Cleanup } = {}
 	const rootPath = instance.Name
-	const success, reason = pcall(function(): ()
+	const success, reason = pcall(function(): boolean
 		bindTree(instance, tree, rootPath, cleanups)
+		return true
 	end)
 	if not success then
 		for index = #cleanups, 1, -1 do

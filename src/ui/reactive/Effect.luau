@@ -18,7 +18,10 @@ local function effect(callback: () -> ()): () -> ()
 		if running then rerun = true; return end
 		running = true
 		local seen: { [Dependency]: boolean } = {}
-		Tracking.capture(function(dependency: Dependency): () seen[dependency] = true end, callback)
+		Tracking.capture(function(dependency: Dependency): () seen[dependency] = true end, function(): boolean
+			callback()
+			return true
+		end)
 		for dependency, subscription in dependencies do
 			if not seen[dependency] then subscription:Destroy(); dependencies[dependency] = nil end
 		end

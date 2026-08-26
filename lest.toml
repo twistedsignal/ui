@@ -3,7 +3,20 @@
 # run everything with `lest`, one suite with `lest run <name>`.
 
 [suites.unit]
-include = ["src/**/*.spec.luau"]
+include = [
+    "src/ui/testing/**/*.spec.luau",
+    "src/ui/motion/Easing.spec.luau",
+]
+
+[suites.roblox]
+include = [
+    "src/ui/reactive/**/*.spec.luau",
+    "src/ui/binding/**/*.spec.luau",
+    "src/ui/motion/Motion.spec.luau",
+    "src/ui/animation/**/*.spec.luau",
+]
+backend = "studio"
+default = false
 
 [settings]
 backend = "native" # default for suites that don't declare one

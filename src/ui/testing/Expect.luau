@@ -95,7 +95,8 @@ const function build(actual: unknown, negated: boolean): Matcher
 			if type(actual) ~= "number" then
 				fail(actual, expected)
 			end
-			check(math.abs(actual - expected) <= (epsilon or 1e-6), expected)
+			const numericActual: number = actual :: number
+			check(math.abs(numericActual - expected) <= (epsilon or 1e-6), expected)
 		end,
 		toThrow = function(message: string?): ()
 			if type(actual) ~= "function" then
@@ -110,7 +111,16 @@ end
 
 const function expect(actual: unknown): Expectation
 	const positive: Matcher = build(actual, false)
-	return setmetatable({ never = build(actual, true) }, { __index = positive }) :: Expectation
+	return {
+		toBe = positive.toBe,
+		toEqual = positive.toEqual,
+		toBeTruthy = positive.toBeTruthy,
+		toBeFalsy = positive.toBeFalsy,
+		toBeNil = positive.toBeNil,
+		toBeNear = positive.toBeNear,
+		toThrow = positive.toThrow,
+		never = build(actual, true),
+	}
 end
 
 return expect
