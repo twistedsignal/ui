@@ -8,7 +8,7 @@ local ui = require("path/to/ui")
 local open = ui.value(false)
 local scale = ui.spring(function(): number
 	return if open() then 1 else 0.9
-end, { speed = 24, damping = 0.75 })
+end, { frequency = 7, damping = 0.75 })
 
 local cleanup = ui.bind(ScreenGui, {
 	Panel = {
@@ -30,7 +30,7 @@ Pin the package with Wally, then require the resulting module with a string requ
 ```sh
 rokit install
 wally install
-rojo build default.project.json -o ui.rbxlx
+rojo build dev.project.json -o ui.rbxlx
 ```
 
 ## API
@@ -38,17 +38,14 @@ rojo build default.project.json -o ui.rbxlx
 The full guides and generated API reference are published at
 [twistedsignal.github.io/ui](https://twistedsignal.github.io/ui/).
 
-- `value`, `derive`, `peek`, `effect`, and `fromObservable` provide callable reactive values backed by Rx Observables. The project uses `nightcycle/rx`, which packages Quenty's Rx implementation for Wally.
-- `bind` resolves existing properties, events, and children. Its cleanup function owns the whole nested binding.
-- `spring`, `accelTween`, `tween`, `impulse`, and `snap` use one motion scheduler. The acceleration tween vendors Nevermore's dependency-free analytic implementation.
-- `ease` contains the standard easing functions. `bezier(x1, y1, x2, y2)` creates a cubic Bézier easing function.
-- `to`, `wait`, `call`, `parallel`, `sequence`, and `play` are small tagged-data animation commands.
-- `expect` provides synchronous fluent assertions, including deep equality and negation through `.never`.
-
-`fromObservable(observable)()` throws until the source emits once. Calling it does not create a permanent subscription. Subscription begins when the returned value is observed.
+- `value`, `derive`, and `effect` provide callable reactive state backed by Rx Observables. The project uses `nightcycle/rx`, which packages Quenty's Rx implementation for Wally.
+- `bind` composes property, event, child, fragment, and reactive-structure bindings. Stopping a bind disposes its work and restores captured properties.
+- `tween` accepts `TweenInfo`. `spring` accepts `frequency`, `damping`, and an optional initial value.
+- `cleanup` and `untrack` control reactive lifetime and dependency tracking.
+- `attribute` and `property` create two-way adapters for Roblox-owned state.
 
 ## Development
 
-Run `lest` for tests and `rojo build default.project.json -o ui.rbxlx` for the project build. Run `npm install` followed by `npm run docs:dev` to preview the documentation. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Run `lest` for tests and `rojo build dev.project.json -o ui.rbxlx` for the development place. Run `npm install` followed by `npm run docs:dev` to preview the documentation. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 MIT licensed. Copyright 2026 Twisted Signal.

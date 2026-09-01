@@ -1,21 +1,20 @@
 --!strict
 
-local Easing = require("@self/Easing")
-local Interpolate = require("@self/Interpolate")
-local Metadata = require("@self/Metadata")
-local Scheduler = require("@self/Scheduler")
-local Source = require("@self/Source")
+local Interpolate = require("./Interpolate")
+local Metadata = require("./Metadata")
+local Scheduler = require("./Scheduler")
+local Source = require("./Source")
 local Types = require("./../reactive/Types")
 local Value = require("./../reactive/Value")
 
-export type Config = { duration: number?, easing: Easing.Easing? }
-
 local Tween = {}
 
-function Tween.new<T>(input: Types.Reactive<T>, config: Config?): Types.ReadonlyValue<T>
-	const options: Config = config or {}
-	local duration = options.duration or 0.2
-	local easing = options.easing or Easing.linear
+function Tween.new<T>(input: Types.Reactive<T>, info: TweenInfo?): Types.ReadonlyValue<T>
+	local tweenInfo = info or TweenInfo.new(0.2)
+	local duration = tweenInfo.Time
+	local function easing(alpha: number): number
+		return game:GetService("TweenService"):GetValue(alpha, tweenInfo.EasingStyle, tweenInfo.EasingDirection)
+	end
 	assert(duration >= 0, "ui.tween: duration must be non-negative")
 	local output: Types.Value<T>? = nil
 	local target: T
@@ -35,9 +34,21 @@ function Tween.new<T>(input: Types.Reactive<T>, config: Config?): Types.Readonly
 		stopStep = Scheduler.add(function(deltaTime: number): boolean
 			if generation ~= ownGeneration then return false end
 			elapsed += deltaTime
-			local alpha = math.min(elapsed / duration, 1)
+			local motionDuration = duration * (if tweenInfo.Reverses then 2 else 1)
+			local cycleDuration = tweenInfo.DelayTime + motionDuration
+			local cycle = math.floor(elapsed / cycleDuration)
+			if tweenInfo.RepeatCount >= 0 and cycle > tweenInfo.RepeatCount then
+				currentOutput(if tweenInfo.Reverses then from else nextTarget)
+				stopStep = nil
+				return false
+			end
+			local cycleElapsed = elapsed - cycle * cycleDuration
+			if cycleElapsed < tweenInfo.DelayTime then return true end
+			local motionElapsed = cycleElapsed - tweenInfo.DelayTime
+			local alpha = math.min(motionElapsed / duration, 1)
+			if tweenInfo.Reverses and motionElapsed > duration then alpha = 1 - math.min((motionElapsed - duration) / duration, 1) end
 			currentOutput(Interpolate.value(from, nextTarget, easing(alpha)))
-			if alpha < 1 then return true end
+			if tweenInfo.RepeatCount < 0 or cycle < tweenInfo.RepeatCount or motionElapsed < motionDuration then return true end
 			stopStep = nil
 			return false
 		end)

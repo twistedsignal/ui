@@ -13,7 +13,7 @@ Add the package to `wally.toml`:
 
 ```toml
 [dependencies]
-ui = "twistedsignal/ui@0.1.0"
+ui = "twistedsignal/ui@0.2.0"
 ```
 
 Run `wally install`, then map the generated `Packages` directory into your Rojo
@@ -33,7 +33,7 @@ expression. An event accepts a callback. A child accepts another binding table.
 local open = ui.value(false)
 local scale = ui.spring(function(): number
 	return if open() then 1 else 0.9
-end, { speed = 24, damping = 0.75 })
+end, { frequency = 7, damping = 0.75 })
 
 local cleanup = ui.bind(screenGui, {
 	Panel = {
@@ -48,10 +48,11 @@ local cleanup = ui.bind(screenGui, {
 })
 ```
 
-Call `cleanup()` when the UI is removed. Calling it more than once is safe.
+Call `cleanup()` when the UI is removed. Calling it more than once is safe. The
+bind also stops itself when its root Instance is destroyed.
 
 ## Next
 
 Read [Reactive state](reactive-state.md) for values and effects, or
-[Motion and animation](motion-and-animation.md) for springs, tweens, and command
-sequences. The API tab contains the generated reference.
+[Motion](motion-and-animation.md) for springs and tweens. The API tab contains
+the generated reference.

@@ -79,4 +79,48 @@ describe("ui.bind", function(): ()
 		root:Destroy()
 		event:Destroy()
 	end)
+
+	it("composes fragments and restores property layers", function(): ()
+		local label = Instance.new("TextLabel")
+		label.Name = "Label"
+		label.Text = "initial"
+		local enabled = Value.new(true)
+		local cleanup = bind(label, {
+			{ Text = "base" },
+			function(): { [string]: unknown }?
+				return if enabled() then { Text = "active" } else nil
+			end,
+		})
+		expect(label.Text).toBe("active")
+		enabled(false)
+		expect(label.Text).toBe("base")
+		cleanup()
+		expect(label.Text).toBe("initial")
+		label:Destroy()
+	end)
+
+	it("composes event fragments", function(): ()
+		local event = Instance.new("BindableEvent")
+		local calls: { number } = {}
+		local cleanup = bind(event, {
+			{ Event = function(): () table.insert(calls, 1) end },
+			{ Event = function(): () table.insert(calls, 2) end },
+		})
+		event:Fire()
+		expect(calls).toEqual({ 1, 2 })
+		cleanup()
+		event:Destroy()
+	end)
+
+	it("rejects ambiguous child names", function(): ()
+		local root = Instance.new("Folder")
+		root.Name = "Root"
+		for _ = 1, 2 do
+			local child = Instance.new("Folder")
+			child.Name = "Duplicate"
+			child.Parent = root
+		end
+		expect(function(): () bind(root, { Duplicate = {} }) end).toThrow("Ambiguous child")
+		root:Destroy()
+	end)
 end)

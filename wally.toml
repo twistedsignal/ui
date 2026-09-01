@@ -1,10 +1,29 @@
 [package]
 name = "twistedsignal/ui"
-version = "0.1.0"
+version = "0.2.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
+exclude = [
+    "CONTRIBUTING.md",
+    "PROMPT.md",
+    "lest.toml",
+    "rokit.toml",
+    "package.json",
+    "package-lock.json",
+    "moonwave.toml",
+    "docs",
+    "dev.project.json",
+    "release.project.json",
+    "node_modules",
+    "build",
+    "Packages",
+    "src/Rx.luau",
+    "src/ui/**/*.spec.luau",
+    "src/ui/animation/**",
+    "src/ui/testing/**",
+    "src/ui/motion/AccelTween.luau",
+    "src/ui/motion/AccelTweenObject.luau",
+]
 
 [dependencies]
-Scythe = "synttx/scythe@1.2.2"
 Rx = "nightcycle/rx@3.7.3"
-Maid = "nightcycle/maid@2.2.2"

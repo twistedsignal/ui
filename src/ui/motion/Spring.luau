@@ -1,12 +1,12 @@
 --!strict
 
-local Metadata = require("@self/Metadata")
-local Source = require("@self/Source")
-local SpringObject = require("@self/SpringObject")
+local Metadata = require("./Metadata")
+local Source = require("./Source")
+local SpringObject = require("./SpringObject")
 local Types = require("./../reactive/Types")
 local Value = require("./../reactive/Value")
 
-export type Config = { speed: number?, damping: number?, epsilon: number? }
+export type Config = { frequency: number?, damping: number?, initial: unknown? }
 
 local Spring = {}
 
@@ -15,20 +15,22 @@ function Spring.new<T>(input: Types.Reactive<T>, config: Config?): Types.Readonl
 	local backend: SpringObject.SpringObject<T>? = nil
 	local output: Types.Value<T>? = nil
 	local springSubscription: Types.Subscription? = nil
-	local epsilon = options.epsilon or 1e-4
-	assert((options.speed or 20) >= 0, "ui.spring: speed must be non-negative")
+	local epsilon = 1e-4
+	local speed = (options.frequency or 4) * 2 * math.pi
+	assert(speed >= 0, "ui.spring: frequency must be non-negative")
 	assert((options.damping or 1) >= 0, "ui.spring: damping must be non-negative")
-	assert(epsilon > 0, "ui.spring: epsilon must be positive")
 
 	local cleanup = Source.observe(input, function(target: T): ()
 		if not backend then
-			backend = SpringObject.new(target, options.speed, options.damping)
+			local initial = if options.initial ~= nil then options.initial :: T else target
+			backend = SpringObject.new(initial, speed, options.damping)
 			const initializedBackend = backend :: SpringObject.SpringObject<T>
 			initializedBackend:SetEpsilon(epsilon)
-			output = Value.new(target)
+			output = Value.new(initial)
 			springSubscription = initializedBackend:Observe():Subscribe(function(value: T): ()
 				(output :: Types.Value<T>)(value)
 			end)
+			if options.initial ~= nil then initializedBackend:SetTarget(target) end
 			return
 		end
 		(backend :: SpringObject.SpringObject<T>):SetTarget(target)

@@ -1,12 +1,22 @@
 {
   "name": "ui",
+  "globIgnorePaths": [
+    "**/*.spec.luau",
+    "src/ui/animation",
+    "src/ui/testing",
+    "src/ui/motion/AccelTween.luau",
+    "src/ui/motion/AccelTweenObject.luau"
+  ],
   "tree": {
     "$className": "Folder",
     "ui": {
       "$path": "src/ui"
     },
-    "Packages": {
-      "$path": "Packages"
+    "Rx": {
+      "$path": "Packages/Rx.lua"
+    },
+    "_Index": {
+      "$path": "Packages/_Index"
     }
   }
 }

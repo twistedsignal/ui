@@ -1,9 +1,9 @@
 --!strict
 
-const AccelTweenObject = require("@self/AccelTweenObject")
-const Metadata = require("@self/Metadata")
-const Scheduler = require("@self/Scheduler")
-const Source = require("@self/Source")
+const AccelTweenObject = require("./AccelTweenObject")
+const Metadata = require("./Metadata")
+const Scheduler = require("./Scheduler")
+const Source = require("./Source")
 const Types = require("./../reactive/Types")
 const Value = require("./../reactive/Value")
 

@@ -5,7 +5,7 @@
 -- https://github.com/Quenty/NevermoreEngine/tree/main/src/spring
 
 const Observable = require("./../reactive/Observable")
-const Scheduler = require("@self/Scheduler")
+const Scheduler = require("./Scheduler")
 
 export type Observable<T> = {
 	ClassName: string,

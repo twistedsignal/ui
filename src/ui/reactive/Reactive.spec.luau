@@ -48,6 +48,55 @@ describe("reactive core", function(): ()
 		expect(seen).toEqual({ 5, 7 })
 	end)
 
+	it("runs effect cleanup before reruns and when stopped", function(): ()
+		local source = reactive.value(1)
+		local events: { string } = {}
+		local stop = reactive.effect(function(): () -> ()
+			local snapshot = source()
+			table.insert(events, `run {snapshot}`)
+			return function(): () table.insert(events, `clean {snapshot}`) end
+		end)
+		source(2)
+		stop()
+		expect(events).toEqual({ "run 1", "clean 1", "run 2", "clean 2" })
+	end)
+
+	it("supports owned cleanup and untracked reads", function(): ()
+		local tracked = reactive.value(1)
+		local ignored = reactive.value(10)
+		local runs = 0
+		local cleanups = 0
+		local stop = reactive.effect(function(): (() -> ())?
+			runs += tracked()
+			reactive.untrack(function(): number return ignored() end)
+			reactive.cleanup(function(): () cleanups += 1 end)
+			return nil
+		end)
+		ignored(11)
+		tracked(2)
+		stop()
+		expect(runs).toBe(3)
+		expect(cleanups).toBe(2)
+		expect(function(): () reactive.cleanup(function(): () end) end).toThrow("no active reactive owner")
+	end)
+
+	it("adapts attributes and properties in both directions", function(): ()
+		local frame = Instance.new("Frame")
+		local mode = reactive.attribute(frame, "Mode", "Default")
+		expect(mode()).toBe("Default")
+		mode("Manual")
+		expect(frame:GetAttribute("Mode")).toBe("Manual")
+		frame:SetAttribute("Mode", "Auto")
+		expect(mode()).toBe("Auto")
+
+		local visible = reactive.property(frame, "Visible")
+		visible(false)
+		expect(frame.Visible).toBe(false)
+		frame.Visible = true
+		expect(visible()).toBe(true)
+		frame:Destroy()
+	end)
+
 	it("rejects readonly writes", function(): ()
 		local result = reactive.derive(function(): number return 1 end)
 		expect(function(): () (result :: any)(2) end).toThrow("readonly Value")
