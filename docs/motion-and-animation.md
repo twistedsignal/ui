@@ -10,7 +10,7 @@ Pass a reactive expression to `ui.spring`, `ui.tween`, or `ui.accelTween`. The
 returned read-only value follows the expression and can be bound to an Instance
 property.
 
-```luau
+```lua
 local target = ui.value(0)
 local position = ui.tween(function(): number
 	return target()
@@ -28,7 +28,7 @@ immediately.
 Commands describe work without starting it. `ui.play` starts one command or an
 array of commands. An array runs as a sequence.
 
-```luau
+```lua
 local cancel = ui.play(ui.sequence({
 	ui.to(opacity, 1, { tween = { duration = 0.2 } }),
 	ui.wait(1),

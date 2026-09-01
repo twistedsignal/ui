@@ -19,7 +19,7 @@ ui = "twistedsignal/ui@0.1.0"
 Run `wally install`, then map the generated `Packages` directory into your Rojo
 project. Require the package from the mapped location:
 
-```luau
+```lua
 local ui = require(ReplicatedStorage.Packages.ui)
 ```
 
@@ -29,7 +29,7 @@ The keys in a binding tree resolve in this order: property, event, then child.
 A property accepts a constant, reactive value, Rx observable, or reactive
 expression. An event accepts a callback. A child accepts another binding table.
 
-```luau
+```lua
 local open = ui.value(false)
 local scale = ui.spring(function(): number
 	return if open() then 1 else 0.9

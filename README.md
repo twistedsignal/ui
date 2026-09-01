@@ -2,7 +2,7 @@
 
 `ui` binds reactive state and animation to Roblox UI that already exists in Studio. It does not create Instances, manage components, or render a virtual tree.
 
-```luau
+```lua
 local ui = require("path/to/ui")
 
 local open = ui.value(false)

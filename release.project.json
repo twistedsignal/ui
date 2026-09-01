@@ -1,0 +1,12 @@
+{
+  "name": "ui",
+  "tree": {
+    "$className": "Folder",
+    "ui": {
+      "$path": "src/ui"
+    },
+    "Packages": {
+      "$path": "Packages"
+    }
+  }
+}
