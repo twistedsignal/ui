@@ -9,3 +9,5 @@ sourcemap.json
 /.lest
 /Packages
 /temp
+/build
+/node_modules

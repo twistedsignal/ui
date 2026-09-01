@@ -1,0 +1,20 @@
+title = "ui"
+gitRepoUrl = "https://github.com/twistedsignal/ui"
+gitSourceBranch = "prod"
+changelog = false
+classOrder = ["ui"]
+
+[docusaurus]
+url = "https://twistedsignal.github.io"
+baseUrl = "/ui/"
+tagline = "Reactive bindings and motion for existing Roblox UI"
+onBrokenLinks = "throw"
+onBrokenMarkdownLinks = "warn"
+
+[home]
+enabled = true
+includeReadme = true
+
+[footer]
+style = "dark"
+copyright = "Copyright © 2026 Twisted Signal. Built with Moonwave and Docusaurus."

@@ -35,6 +35,9 @@ rojo build default.project.json -o ui.rbxlx
 
 ## API
 
+The full guides and generated API reference are published at
+[twistedsignal.github.io/ui](https://twistedsignal.github.io/ui/).
+
 - `value`, `derive`, `peek`, `effect`, and `fromObservable` provide callable reactive values backed by Nightcycle Rx Observables.
 - `bind` resolves existing properties, events, and children. Its cleanup function owns the whole nested binding.
 - `spring`, `accelTween`, `tween`, `impulse`, and `snap` use one motion scheduler. The acceleration tween vendors Nevermore's dependency-free analytic implementation.
@@ -46,6 +49,6 @@ rojo build default.project.json -o ui.rbxlx
 
 ## Development
 
-Run `lest` for tests and `rojo build default.project.json -o ui.rbxlx` for the project build. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Run `lest` for tests and `rojo build default.project.json -o ui.rbxlx` for the project build. Run `npm install` followed by `npm run docs:dev` to preview the documentation. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 MIT licensed. Copyright 2026 Twisted Signal.

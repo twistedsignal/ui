@@ -1,0 +1,11 @@
+{
+  "name": "@twistedsignal/ui-docs",
+  "private": true,
+  "scripts": {
+    "docs:dev": "moonwave dev --code src",
+    "docs:build": "moonwave build --code src"
+  },
+  "devDependencies": {
+    "moonwave": "1.4.2"
+  }
+}
