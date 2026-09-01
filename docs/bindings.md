@@ -28,6 +28,28 @@ local stop = ui.bind(button, {
 Property functions are tracked expressions. Event functions are callbacks. Child
 tables recurse into an existing child with the exact key name.
 
+Under `--!strict`, `bind` derives its keys and values from the instance type.
+Property values and reactive sources must produce the matching property type,
+and event callbacks use the event's parameter list. Give named children an
+intersection type so their names and bindings are checked too:
+
+```lua
+type ButtonView = TextButton & {
+	UIScale: UIScale,
+}
+
+local button = existingButton :: ButtonView
+ui.bind(button, {
+	Text = "Save",
+	Activated = function(inputObject: InputObject, clickCount: number)
+		print(inputObject, clickCount)
+	end,
+	UIScale = {
+		Scale = 1,
+	},
+})
+```
+
 ## Reactive structure
 
 An array function can return a binding fragment or `nil`. Its dependencies decide

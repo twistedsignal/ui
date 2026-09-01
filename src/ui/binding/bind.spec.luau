@@ -14,9 +14,10 @@ describe("ui.bind", function(): ()
 		const label = Instance.new("TextLabel")
 		label.Name = "Label"
 		label.Parent = root
+		const typedRoot = (root :: any) :: Folder & { Label: TextLabel }
 		const text = Value.new("one")
 		const visible = Value.new(true)
-		const cleanup = bind(root, {
+		const cleanup = bind(typedRoot, {
 			Label = {
 				Text = text,
 				Visible = function(): boolean
@@ -64,7 +65,7 @@ describe("ui.bind", function(): ()
 		const root = Instance.new("Folder")
 		root.Name = "Root"
 		const missingOk, missingError = pcall(function(): ()
-			bind(root, { Missing = {} })
+			(bind :: any)(root, { Missing = {} })
 		end)
 		expect(missingOk).toBe(false)
 		expect(tostring(missingError)).toContain('Could not resolve "Root.Missing"')
@@ -72,7 +73,7 @@ describe("ui.bind", function(): ()
 		const event = Instance.new("BindableEvent")
 		event.Name = "Action"
 		const eventOk, eventError = pcall(function(): ()
-			bind(event, { Event = true })
+			(bind :: any)(event, { Event = true })
 		end)
 		expect(eventOk).toBe(false)
 		expect(tostring(eventError)).toContain('Expected function for event "Action.Event", got boolean')
@@ -85,12 +86,13 @@ describe("ui.bind", function(): ()
 		label.Name = "Label"
 		label.Text = "initial"
 		local enabled = Value.new(true)
-		local cleanup = bind(label, {
+		local bindings: bind.Binding<TextLabel> = {
 			{ Text = "base" },
-			function(): { [string]: unknown }?
+			function()
 				return if enabled() then { Text = "active" } else nil
 			end,
-		})
+		}
+		local cleanup = bind(label, bindings)
 		expect(label.Text).toBe("active")
 		enabled(false)
 		expect(label.Text).toBe("base")
@@ -102,10 +104,11 @@ describe("ui.bind", function(): ()
 	it("composes event fragments", function(): ()
 		local event = Instance.new("BindableEvent")
 		local calls: { number } = {}
-		local cleanup = bind(event, {
+		local bindings: bind.Binding<BindableEvent> = {
 			{ Event = function(): () table.insert(calls, 1) end },
 			{ Event = function(): () table.insert(calls, 2) end },
-		})
+		}
+		local cleanup = bind(event, bindings)
 		event:Fire()
 		expect(calls).toEqual({ 1, 2 })
 		cleanup()
@@ -120,7 +123,7 @@ describe("ui.bind", function(): ()
 			child.Name = "Duplicate"
 			child.Parent = root
 		end
-		expect(function(): () bind(root, { Duplicate = {} }) end).toThrow("Ambiguous child")
+		expect(function(): () (bind :: any)(root, { Duplicate = {} }) end).toThrow("Ambiguous child")
 		root:Destroy()
 	end)
 end)

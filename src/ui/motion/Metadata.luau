@@ -3,6 +3,7 @@
 export type Backend = {
 	impulse: ((unknown) -> ())?,
 	snap: (() -> ())?,
+	cleanup: (() -> ())?,
 }
 
 local records: { [unknown]: Backend } = setmetatable({}, { __mode = "k" }) :: any

@@ -94,7 +94,7 @@ export type ReadonlyValue<T> = reactive.ReadonlyValue<T>
 export type Observable<T> = reactive.Observable<T>
 export type Reactive<T> = reactive.Reactive<T>
 export type SpringOptions = motion.SpringConfig
-export type Binding = { [string | number]: unknown }
+export type Binding<T> = bind.Binding<T>
 
 return table.freeze({
 	value = reactive.value,

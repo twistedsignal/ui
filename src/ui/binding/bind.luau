@@ -3,10 +3,76 @@
 local Effect = require("./../reactive/Effect")
 local Input = require("./../reactive/Input")
 local Observable = require("./../reactive/Observable")
+local Types = require("./../reactive/Types")
 local Metadata = require("./../motion/Metadata")
 
-export type Binding = { [string | number]: unknown }
 export type Cleanup = () -> ()
+
+type Reactive<T> = Types.Reactive<T>
+
+-- Builds a binding table from the concrete Instance type. Writable engine
+-- members become reactive properties, signals become their callback type, and
+-- typed child members recurse into their own binding table.
+export type Binding<T> = InstanceBinding<T>
+
+-- selene: allow(undefined_variable)
+type function InstanceBinding(T)
+	local result = types.newtable()
+	local pending = { T }
+	local cursor = 1
+	while pending[cursor] do
+		local current = pending[cursor] :: any
+		cursor += 1
+		if current:is("intersection") then
+			for _, component in current:components() do
+				table.insert(pending, component)
+			end
+		elseif current:is("table") or current:is("extern") then
+			for key, property in current:properties() do
+				local callback: any = nil
+				local read = property.read :: any
+				local childType: any = nil
+				local candidate: any = property.write
+				while candidate and candidate:is("extern") do
+					for candidateKey in candidate:properties() do
+						if candidateKey:value() == "Destroying" then childType = property.write end
+					end
+					candidate = candidate:readparent()
+				end
+				if read and (read:is("table") or read:is("extern")) then
+					local connectProperty: any = nil
+					for signalKey, signalProperty in read:properties() do
+						if signalKey:value() == "Connect" then connectProperty = signalProperty end
+					end
+					local connect: any = if connectProperty then connectProperty.read else nil
+					if connect and connect:is("function") then
+						local parameters: any = connect:parameters().head
+						callback = if parameters then parameters[2] else nil
+					end
+				end
+				if callback then
+					result:setproperty(key, types.optional(callback))
+				elseif childType then
+					result:setproperty(key, types.optional(InstanceBinding(childType)))
+				elseif property.write and not (read and read:is("function")) then
+					result:setproperty(key, types.optional(Reactive(property.write)))
+				end
+			end
+			if current:is("extern") then
+				local parent = current:readparent()
+				if parent then table.insert(pending, parent) end
+			end
+		end
+	end
+	local fragment = types.copy(result)
+	result:setindexer(types.number, Reactive(types.optional(fragment)))
+	return result
+end
+type Bind =
+	(<T, B>(instance: T, bindings: B & Binding<T>) -> Cleanup)
+	& (<T>(instance: T, bindings: Types.ReadonlyValue<Binding<T>?>) -> Cleanup)
+	& (<T>(instance: T, bindings: Types.Observable<Binding<T>?>) -> Cleanup)
+	& (<T>(instance: T, bindings: () -> Binding<T>?) -> Cleanup)
 type MemberKind = "property" | "event" | "child" | "missing" | "ambiguous"
 type Writer = { value: unknown }
 type PropertyState = { initial: unknown, writers: { Writer } }
@@ -88,7 +154,7 @@ local function mountProperty(context: Context, instance: Instance, property: str
 	end
 end
 
-local mountBinding: (Context, Instance, Binding, string) -> Cleanup
+local mountBinding: (Context, Instance, { [string | number]: unknown }, string) -> Cleanup
 
 local function mountEntry(context: Context, instance: Instance, name: string, binding: unknown, path: string): Cleanup
 	local memberPath = `{path}.{name}`
@@ -104,7 +170,7 @@ local function mountEntry(context: Context, instance: Instance, name: string, bi
 	if typeof(binding) ~= "table" or Input.isValue(binding) or Observable.isObservable(binding) then
 		error(`ui.bind: Expected binding table for child "{memberPath}", got {valueType(binding)}`, 0)
 	end
-	return mountBinding(context, member :: Instance, binding :: Binding, memberPath)
+	return mountBinding(context, member :: Instance, binding :: { [string | number]: unknown }, memberPath)
 end
 
 local function mountFragment(context: Context, instance: Instance, fragment: unknown, path: string): Cleanup
@@ -112,7 +178,7 @@ local function mountFragment(context: Context, instance: Instance, fragment: unk
 	if typeof(fragment) ~= "table" or Input.isValue(fragment) or Observable.isObservable(fragment) then
 		error(`ui.bind: Expected binding fragment below "{path}", got {valueType(fragment)}`, 0)
 	end
-	return mountBinding(context, instance, fragment :: Binding, path)
+	return mountBinding(context, instance, fragment :: { [string | number]: unknown }, path)
 end
 
 local function mountReactiveFragment(context: Context, instance: Instance, input: unknown, path: string): Cleanup
@@ -134,7 +200,7 @@ local function mountReactiveFragment(context: Context, instance: Instance, input
 	return function(): () stop(); if branchCleanup then branchCleanup(); branchCleanup = nil end end
 end
 
-mountBinding = function(context: Context, instance: Instance, bindings: Binding, path: string): Cleanup
+mountBinding = function(context: Context, instance: Instance, bindings: { [string | number]: unknown }, path: string): Cleanup
 	local cleanups: { Cleanup } = {}
 	local success, reason = pcall(function(): ()
 		for index = 1, #bindings do
@@ -160,14 +226,15 @@ mountBinding = function(context: Context, instance: Instance, bindings: Binding,
 	end
 end
 
-local function bind(instance: Instance, bindings: unknown): Cleanup
+local function bind(instance: unknown, bindings: unknown): Cleanup
 	assert(typeof(instance) == "Instance", "ui.bind: expected an Instance")
+	local target = (instance :: any) :: Instance
 	local context: Context = { properties = {}, motionRefs = {}, stopped = false }
 	local rootCleanup: Cleanup? = nil
 	local success, reason = pcall(function(): ()
 		if typeof(bindings) == "function" or Input.isValue(bindings) or Observable.isObservable(bindings) then
-			rootCleanup = mountReactiveFragment(context, instance, bindings, instance.Name)
-		else rootCleanup = mountFragment(context, instance, bindings, instance.Name) end
+			rootCleanup = mountReactiveFragment(context, target, bindings, target.Name)
+		else rootCleanup = mountFragment(context, target, bindings, target.Name) end
 	end)
 	if not success then context.stopped = true; if rootCleanup then rootCleanup() end; error(reason, 2) end
 	local destroying: RBXScriptConnection? = nil
@@ -180,8 +247,8 @@ local function bind(instance: Instance, bindings: unknown): Cleanup
 		context.stopped = true
 		table.clear(context.properties)
 	end
-	destroying = instance.Destroying:Connect(function(): () context.stopped = true; cleanup() end)
+	destroying = target.Destroying:Connect(function(): () context.stopped = true; cleanup() end)
 	return cleanup
 end
 
-return bind
+return bind :: Bind
