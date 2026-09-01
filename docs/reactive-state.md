@@ -45,6 +45,6 @@ stop()
 
 ## Rx observables
 
-`ui.fromObservable(observable)` adapts a Nightcycle Rx observable into a
-read-only reactive value. Reading the value before its first emission throws.
-The adapter subscribes only while something observes the returned value.
+`ui.fromObservable(observable)` adapts an Rx observable into a read-only reactive
+value. Reading the value before its first emission throws. The adapter subscribes
+only while something observes the returned value.

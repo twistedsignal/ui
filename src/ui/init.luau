@@ -25,7 +25,7 @@ const expect = require("@self/testing/Expect")
 ]=]
 
 --[=[
-	Creates a read-only reactive value from a Nightcycle Rx observable. Reading it
+	Creates a read-only reactive value from an Rx observable. Reading it
 	throws until the observable emits its first value.
 
 	@function fromObservable

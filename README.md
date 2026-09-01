@@ -38,7 +38,7 @@ rojo build default.project.json -o ui.rbxlx
 The full guides and generated API reference are published at
 [twistedsignal.github.io/ui](https://twistedsignal.github.io/ui/).
 
-- `value`, `derive`, `peek`, `effect`, and `fromObservable` provide callable reactive values backed by Nightcycle Rx Observables.
+- `value`, `derive`, `peek`, `effect`, and `fromObservable` provide callable reactive values backed by Rx Observables. The project uses `nightcycle/rx`, which packages Quenty's Rx implementation for Wally.
 - `bind` resolves existing properties, events, and children. Its cleanup function owns the whole nested binding.
 - `spring`, `accelTween`, `tween`, `impulse`, and `snap` use one motion scheduler. The acceleration tween vendors Nevermore's dependency-free analytic implementation.
 - `ease` contains the standard easing functions. `bezier(x1, y1, x2, y2)` creates a cubic Bézier easing function.
