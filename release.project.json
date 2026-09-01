@@ -8,15 +8,15 @@
     "src/ui/motion/AccelTweenObject.luau"
   ],
   "tree": {
-    "$className": "Folder",
-    "ui": {
-      "$path": "src/ui"
-    },
-    "Rx": {
-      "$path": "Packages/Rx.lua"
-    },
-    "_Index": {
-      "$path": "Packages/_Index"
+    "$path": "src/ui",
+    "Packages": {
+      "$className": "Folder",
+      "Rx": {
+        "$path": "Packages/Rx.lua"
+      },
+      "_Index": {
+        "$path": "Packages/_Index"
+      }
     }
   }
 }

@@ -29,5 +29,5 @@ dependencies = []
 
 [[package]]
 name = "twistedsignal/ui"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [["Rx", "nightcycle/rx@3.7.3"]]

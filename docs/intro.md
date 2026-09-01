@@ -13,7 +13,7 @@ Add the package to `wally.toml`:
 
 ```toml
 [dependencies]
-ui = "twistedsignal/ui@0.2.0"
+ui = "twistedsignal/ui@0.2.1"
 ```
 
 Run `wally install`, then map the generated `Packages` directory into your Rojo

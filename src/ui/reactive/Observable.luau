@@ -2,5 +2,9 @@
 
 -- Rx does not export its Observable constructor, but every Rx observable uses
 -- the constructor table as its metatable.
-local Rx = require("../../Rx")
+local bundled: boolean, dependency: unknown = pcall(require, "../Packages/Rx")
+local Rx: any = dependency
+if not bundled then
+	Rx = require("../../Rx")
+end
 return getmetatable(Rx.EMPTY)
