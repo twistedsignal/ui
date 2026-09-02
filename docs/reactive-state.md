@@ -63,3 +63,20 @@ local position = ui.property(scrollingFrame, "CanvasPosition")
 mode("Manual")
 print(position())
 ```
+
+## Rx Observables
+
+`ui.fromObservable(source)` wraps an Rx Observable in a callable
+`ui.ReadonlyValue<T>`. Reading it returns the latest emitted value. The first
+read requires a synchronous emission. For an asynchronous source, subscribe to
+the value's `.observable` before reading it.
+
+`ui.toObservable(input)` converts a value, read-only value, tracked function, or
+constant into an Rx Observable.
+
+```lua
+local count: ui.ReadonlyValue<number> = ui.fromObservable(countObservable)
+local doubled: ui.Observable<number> = ui.toObservable(function(): number
+	return count() * 2
+end)
+```

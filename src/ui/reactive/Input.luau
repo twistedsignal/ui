@@ -5,6 +5,8 @@ local FromObservable = require("./FromObservable")
 local Observable = require("./Observable")
 local Types = require("./Types")
 
+export type ToObservable = <T>(Types.Reactive<T>) -> Types.Observable<T>
+
 local Input = {}
 
 function Input.isValue(value: unknown): boolean

@@ -88,6 +88,20 @@ const reactive = require("@self/reactive")
 	@param propertyName string
 	@return Value<T>
 ]=]
+--[=[
+	Wraps an Rx Observable in a callable read-only value.
+	@function fromObservable
+	@within ui
+	@param source Observable<T>
+	@return ReadonlyValue<T>
+]=]
+--[=[
+	Converts a reactive input into an Rx Observable.
+	@function toObservable
+	@within ui
+	@param input Reactive<T>
+	@return Observable<T>
+]=]
 
 export type Value<T> = reactive.Value<T>
 export type ReadonlyValue<T> = reactive.ReadonlyValue<T>
@@ -96,6 +110,8 @@ export type Reactive<T> = reactive.Reactive<T>
 export type Cleanup = reactive.Cleanup
 export type EffectCallback = reactive.EffectCallback
 export type Effect = reactive.Effect
+export type FromObservable = reactive.FromObservable
+export type ToObservable = reactive.ToObservable
 export type SpringOptions = motion.SpringConfig
 export type Binding<T> = bind.Binding<T>
 export type Bind = bind.Bind
@@ -111,4 +127,6 @@ return table.freeze({
 	untrack = reactive.untrack,
 	attribute = reactive.attribute,
 	property = reactive.property,
+	fromObservable = reactive.fromObservable,
+	toObservable = reactive.toObservable,
 })

@@ -17,6 +17,8 @@ export type Reactive<T> = Types.Reactive<T>
 export type Cleanup = Effect.Cleanup
 export type EffectCallback = Effect.Callback
 export type Effect = Effect.Effect
+export type FromObservable = FromObservable.FromObservable
+export type ToObservable = Input.ToObservable
 
 local reactive = {
 	value = Value.new,

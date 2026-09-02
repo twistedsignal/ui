@@ -4,6 +4,8 @@ local Types = require("./Types")
 local Value = require("./Value")
 local Observable = require("./Observable")
 
+export type FromObservable = <T>(Types.Observable<T>) -> Types.ReadonlyValue<T>
+
 local function fromObservable<T>(source: Types.Observable<T>): Types.ReadonlyValue<T>
 	local current: T
 	local hasCurrent = false
@@ -26,4 +28,4 @@ local function fromObservable<T>(source: Types.Observable<T>): Types.ReadonlyVal
 	end, observable)
 end
 
-return fromObservable
+return fromObservable :: FromObservable

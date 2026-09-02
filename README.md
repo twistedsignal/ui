@@ -43,6 +43,7 @@ The full guides and generated API reference are published at
 - `tween` accepts `TweenInfo`. `spring` accepts `frequency`, `damping`, and an optional initial value.
 - `cleanup` and `untrack` control reactive lifetime and dependency tracking.
 - `attribute` and `property` create two-way adapters for Roblox-owned state.
+- `fromObservable` and `toObservable` convert between Rx Observables and reactive values.
 
 ## Development
 

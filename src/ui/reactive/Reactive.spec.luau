@@ -2,6 +2,7 @@
 
 local lest = require("@lest")
 local reactive = require("./init")
+local ui = require("../init")
 
 local describe = lest.describe
 local expect = lest.expect
@@ -100,5 +101,19 @@ describe("reactive core", function(): ()
 	it("rejects readonly writes", function(): ()
 		local result = reactive.derive(function(): number return 1 end)
 		expect(function(): () (result :: any)(2) end).toThrow("readonly Value")
+	end)
+
+	it("converts values and Observables in both directions", function(): ()
+		local source = ui.value(3)
+		local converted: ui.ReadonlyValue<number> = ui.fromObservable(source.observable)
+		expect(converted()).toBe(3)
+
+		local seen: { number } = {}
+		local observable: ui.Observable<number> = ui.toObservable(converted)
+		local subscription = observable:Subscribe(function(value: number): () table.insert(seen, value) end)
+		source(4)
+		expect(converted()).toBe(4)
+		expect(seen).toEqual({ 3, 4 })
+		subscription:Destroy()
 	end)
 end)
