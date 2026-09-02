@@ -28,18 +28,14 @@ local stop = ui.bind(button, {
 Property functions are tracked expressions. Event functions are callbacks. Child
 tables recurse into an existing child with the exact key name.
 
-Under `--!strict`, `bind` derives its keys and values from the instance type.
-Property values and reactive sources must produce the matching property type,
-and event callbacks use the event's parameter list. Give named children an
-intersection type so their names and bindings are checked too:
+`ui.Binding<T>` is exported for annotations. Its generic parameter records the
+root Instance type, while its entries stay open because Roblox properties,
+events, named children, and numeric fragments share the same table. `bind`
+checks those entries when it mounts them. This avoids recursive compile-time
+type evaluation on large Instance types.
 
 ```lua
-type ButtonView = TextButton & {
-	UIScale: UIScale,
-}
-
-local button = existingButton :: ButtonView
-ui.bind(button, {
+local bindings: ui.Binding<TextButton> = {
 	Text = "Save",
 	Activated = function(inputObject: InputObject, clickCount: number)
 		print(inputObject, clickCount)
@@ -47,7 +43,9 @@ ui.bind(button, {
 	UIScale = {
 		Scale = 1,
 	},
-})
+}
+
+ui.bind(existingButton, bindings)
 ```
 
 ## Reactive structure

@@ -14,6 +14,9 @@ export type Value<T> = Types.Value<T>
 export type ReadonlyValue<T> = Types.ReadonlyValue<T>
 export type Observable<T> = Types.Observable<T>
 export type Reactive<T> = Types.Reactive<T>
+export type Cleanup = Effect.Cleanup
+export type EffectCallback = Effect.Callback
+export type Effect = Effect.Effect
 
 local reactive = {
 	value = Value.new,

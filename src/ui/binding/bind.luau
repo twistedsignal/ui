@@ -7,69 +7,9 @@ local Types = require("./../reactive/Types")
 local Metadata = require("./../motion/Metadata")
 
 export type Cleanup = () -> ()
-
-type Reactive<T> = Types.Reactive<T>
-
--- Builds a binding table from the concrete Instance type. Writable engine
--- members become reactive properties, signals become their callback type, and
--- typed child members recurse into their own binding table.
-export type Binding<T> = InstanceBinding<T>
-
--- selene: allow(undefined_variable)
-type function InstanceBinding(T)
-	local result = types.newtable()
-	local pending = { T }
-	local cursor = 1
-	while pending[cursor] do
-		local current = pending[cursor] :: any
-		cursor += 1
-		if current:is("intersection") then
-			for _, component in current:components() do
-				table.insert(pending, component)
-			end
-		elseif current:is("table") or current:is("extern") then
-			for key, property in current:properties() do
-				local callback: any = nil
-				local read = property.read :: any
-				local childType: any = nil
-				local candidate: any = property.write
-				while candidate and candidate:is("extern") do
-					for candidateKey in candidate:properties() do
-						if candidateKey:value() == "Destroying" then childType = property.write end
-					end
-					candidate = candidate:readparent()
-				end
-				if read and (read:is("table") or read:is("extern")) then
-					local connectProperty: any = nil
-					for signalKey, signalProperty in read:properties() do
-						if signalKey:value() == "Connect" then connectProperty = signalProperty end
-					end
-					local connect: any = if connectProperty then connectProperty.read else nil
-					if connect and connect:is("function") then
-						local parameters: any = connect:parameters().head
-						callback = if parameters then parameters[2] else nil
-					end
-				end
-				if callback then
-					result:setproperty(key, types.optional(callback))
-				elseif childType then
-					result:setproperty(key, types.optional(InstanceBinding(childType)))
-				elseif property.write and not (read and read:is("function")) then
-					result:setproperty(key, types.optional(Reactive(property.write)))
-				end
-			end
-			if current:is("extern") then
-				local parent = current:readparent()
-				if parent then table.insert(pending, parent) end
-			end
-		end
-	end
-	local fragment = types.copy(result)
-	result:setindexer(types.number, Reactive(types.optional(fragment)))
-	return result
-end
-type Bind =
-	(<T, B>(instance: T, bindings: B & Binding<T>) -> Cleanup)
+export type Binding<T> = { [string | number]: unknown }
+export type Bind =
+	(<T>(instance: T, bindings: Binding<T>) -> Cleanup)
 	& (<T>(instance: T, bindings: Types.ReadonlyValue<Binding<T>?>) -> Cleanup)
 	& (<T>(instance: T, bindings: Types.Observable<Binding<T>?>) -> Cleanup)
 	& (<T>(instance: T, bindings: () -> Binding<T>?) -> Cleanup)

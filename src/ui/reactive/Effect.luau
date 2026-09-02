@@ -7,7 +7,11 @@ local Owner = require("./Owner")
 type Dependency = Tracking.Dependency
 type Subscription = Types.Subscription
 
-local function effect(callback: () -> (() -> ())?): () -> ()
+export type Cleanup = () -> ()
+export type Callback = () -> Cleanup?
+export type Effect = (Callback) -> Cleanup
+
+local function effect(callback: Callback): Cleanup
 	local dependencies: { [Dependency]: Subscription } = {}
 	local stopped = false
 	local running = false

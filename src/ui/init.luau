@@ -93,8 +93,12 @@ export type Value<T> = reactive.Value<T>
 export type ReadonlyValue<T> = reactive.ReadonlyValue<T>
 export type Observable<T> = reactive.Observable<T>
 export type Reactive<T> = reactive.Reactive<T>
+export type Cleanup = reactive.Cleanup
+export type EffectCallback = reactive.EffectCallback
+export type Effect = reactive.Effect
 export type SpringOptions = motion.SpringConfig
 export type Binding<T> = bind.Binding<T>
+export type Bind = bind.Bind
 
 return table.freeze({
 	value = reactive.value,
