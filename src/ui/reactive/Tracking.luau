@@ -2,6 +2,8 @@
 
 export type Dependency = {
 	observable: { Subscribe: (self: any, fire: (unknown) -> ()) -> { Destroy: (self: any) -> () } },
+	_subscribeReactive: (self: any, invalidate: () -> ()) -> { Destroy: (self: any) -> () },
+	_rank: number,
 }
 
 export type Collector = (Dependency) -> ()

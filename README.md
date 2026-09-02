@@ -38,7 +38,7 @@ rojo build dev.project.json -o ui.rbxlx
 The full guides and generated API reference are published at
 [twistedsignal.github.io/ui](https://twistedsignal.github.io/ui/).
 
-- `value`, `derive`, and `effect` provide callable reactive state backed by Rx Observables. The project uses `nightcycle/rx`, which packages Quenty's Rx implementation for Wally.
+- `value`, `derive`, `effect`, and `batch` provide synchronous reactive state backed by Rx Observables. The project uses `nightcycle/rx`, which packages Quenty's Rx implementation for Wally.
 - `bind` composes property, event, child, fragment, and reactive-structure bindings. Stopping a bind disposes its work and restores captured properties.
 - `tween` accepts `TweenInfo`. `spring` accepts `frequency`, `damping`, and an optional initial value.
 - `cleanup` and `untrack` control reactive lifetime and dependency tracking.

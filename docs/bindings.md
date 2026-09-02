@@ -70,5 +70,12 @@ Later active fragments take priority. Removing a fragment reveals the previous
 writer. Stopping the root bind restores the property value captured before the
 first writer and disconnects every event and reactive branch.
 
+The bind owns only work it creates: property subscriptions, tracked binding
+functions, event connections declared in the binding table, and reactive
+branches. It does not destroy the root or child Instances. It also cannot clean
+up connections or Instances that application code creates outside a tracked
+binding function. Register such work with `ui.cleanup` inside that function, or
+manage it manually.
+
 Fragments are ordinary tables, so components are ordinary functions that return
 tables. No component constructor or merge helper is needed.

@@ -12,30 +12,44 @@ const reactive = require("@self/reactive")
 ]=]
 
 --[=[
-	Creates writable reactive state.
+	Creates synchronous writable reactive state. Calling the Value with no argument
+	reads it; calling it with a value writes it. Equal writes are ignored.
 	@function value
 	@within ui
 	@param initial T
 	@return Value<T>
 ]=]
 --[=[
-	Creates a lazy, memoized read-only value.
+	Creates a lazy, memoized read-only value with dynamic dependency tracking.
+	Derived results are not equality-deduplicated.
 	@function derive
 	@within ui
 	@param compute () -> T
 	@return ReadonlyValue<T>
 ]=]
 --[=[
-	Runs tracked side-effecting work immediately and after its dependencies change.
-	A cleanup returned by `run` executes before the next run and when stopped.
+	Runs tracked side-effecting work immediately and synchronously after its dynamic
+	dependencies change. Before a rerun, the returned cleanup runs, followed by
+	`cleanup` callbacks in reverse registration order.
 	@function effect
 	@within ui
 	@param run () -> (() -> ())?
 	@return () -> ()
 ]=]
 --[=[
+	Groups synchronous reactive writes into one propagation cycle. Writes and reads
+	inside `run` use current values. Derived emissions, effects, and bindings update
+	once after the outermost batch returns. Nested batches share the same cycle. If
+	`run` throws, completed writes propagate before its original error is rethrown.
+	@function batch
+	@within ui
+	@param run () -> T...
+	@return T...
+]=]
+--[=[
 	Mounts bindings onto an existing Instance. The returned cleanup is idempotent,
-	disposes every owned branch and resource, and restores captured properties.
+	disposes subscriptions, declared event connections, and reactive branches, then
+	restores captured properties. It does not destroy Instances or external work.
 	@function bind
 	@within ui
 	@param instance Instance
@@ -59,13 +73,16 @@ const reactive = require("@self/reactive")
 	@return ReadonlyValue<T>
 ]=]
 --[=[
-	Registers a callback with the current bind, effect, or reactive branch.
+	Registers a callback with the current effect execution or tracked binding
+	function. Owned callbacks run in reverse order; calling this without an owner
+	is an error. Instances and external connections are not owned automatically.
 	@function cleanup
 	@within ui
 	@param dispose () -> ()
 ]=]
 --[=[
-	Runs a function without recording reactive dependencies.
+	Runs a function without recording its reactive reads as dependencies. This does
+	not prevent writes or stop existing dependencies from updating.
 	@function untrack
 	@within ui
 	@param read () -> T
@@ -120,6 +137,7 @@ return table.freeze({
 	value = reactive.value,
 	derive = reactive.derive,
 	effect = reactive.effect,
+	batch = reactive.batch,
 	bind = bind,
 	tween = motion.tween,
 	spring = motion.spring,

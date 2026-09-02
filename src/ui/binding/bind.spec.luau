@@ -3,11 +3,30 @@
 const lest = require("@lest")
 const bind = require("./bind")
 const Value = require("./../reactive/Value")
+const reactive = require("./../reactive")
 const describe = lest.describe
 const it = lest.it
 const expect = lest.expect
 
 describe("ui.bind", function(): ()
+	it("updates a property once after batched dependencies change", function(): ()
+		local label = Instance.new("TextLabel")
+		local first = reactive.value("Ada")
+		local last = reactive.value("Byron")
+		local assignments = 0
+		local cleanup = bind(label, {
+			Text = function(): string
+				assignments += 1
+				return `{first()} {last()}`
+			end,
+		})
+		reactive.batch(function(): () first("Augusta"); last("Lovelace") end)
+		expect(label.Text).toBe("Augusta Lovelace")
+		expect(assignments).toBe(2)
+		cleanup()
+		label:Destroy()
+	end)
+
 	it("binds constants, Values, expressions, and nested children", function(): ()
 		const root = Instance.new("Folder")
 		root.Name = "Root"

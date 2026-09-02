@@ -9,6 +9,102 @@ local expect = lest.expect
 local it = lest.it
 
 describe("reactive core", function(): ()
+	it("defers propagation for a single batched write", function(): ()
+		local value = ui.value(1)
+		local seen: { number } = {}
+		local stop = ui.effect(function(): () table.insert(seen, value()) end)
+		ui.batch(function(): ()
+			value(2)
+			expect(value()).toBe(2)
+			expect(seen).toEqual({ 1 })
+		end)
+		expect(seen).toEqual({ 1, 2 })
+		stop()
+	end)
+
+	it("batches writes, nesting, current reads, and callback results", function(): ()
+		local first = ui.value(1)
+		local second = ui.value(10)
+		local total = ui.derive(function(): number return first() + second() end)
+		local seen: { number } = {}
+		local stop = ui.effect(function(): () table.insert(seen, total()) end)
+		local numberResult, stringResult = ui.batch(function(): (number, string)
+			first(2)
+			first(3)
+			expect(first()).toBe(3)
+			expect(total()).toBe(13)
+			ui.batch(function(): () second(20) end)
+			expect(total()).toBe(23)
+			expect(seen).toEqual({ 11 })
+			return 42, "answer"
+		end)
+		expect(numberResult).toBe(42)
+		expect(stringResult).toBe("answer")
+		expect(total()).toBe(23)
+		expect(seen).toEqual({ 11, 23 })
+		stop()
+	end)
+
+	it("does not expose intermediate values through a diamond graph", function(): ()
+		local source = ui.value(1)
+		local left = ui.derive(function(): number return source() * 2 end)
+		local right = ui.derive(function(): number return source() * 3 end)
+		local total = ui.derive(function(): number return left() + right() end)
+		local seen: { number } = {}
+		local stop = ui.effect(function(): () table.insert(seen, total()) end)
+		ui.batch(function(): () source(2); source(3) end)
+		expect(seen).toEqual({ 5, 15 })
+		stop()
+	end)
+
+	it("restores batching after callback errors and keeps later updates synchronous", function(): ()
+		local value = ui.value(0)
+		local seen: { number } = {}
+		local stop = ui.effect(function(): () table.insert(seen, value()) end)
+		local ok, reason = pcall(function(): ()
+			ui.batch(function(): () value(1); error("batch failure") end)
+		end)
+		expect(ok).toBe(false)
+		expect(tostring(reason)).toContain("batch failure")
+		expect(tostring(reason)).toContain("Reactive.spec")
+		expect(seen).toEqual({ 0, 1 })
+		value(2)
+		expect(seen).toEqual({ 0, 1, 2 })
+		stop()
+	end)
+
+	it("applies cleanup and dynamic dependency changes once after a batch", function(): ()
+		local useFirst = ui.value(true)
+		local first = ui.value(1)
+		local second = ui.value(10)
+		local events: { string } = {}
+		local stop = ui.effect(function(): () -> ()
+			local snapshot = if useFirst() then first() else second()
+			table.insert(events, `run {snapshot}`)
+			ui.cleanup(function(): () table.insert(events, `owned {snapshot}`) end)
+			return function(): () table.insert(events, `returned {snapshot}`) end
+		end)
+		ui.batch(function(): () useFirst(false); first(2); second(11) end)
+		first(3)
+		second(12)
+		stop()
+		expect(events).toEqual({
+			"run 1", "returned 1", "owned 1", "run 11",
+			"returned 11", "owned 11", "run 12", "returned 12", "owned 12",
+		})
+	end)
+
+	it("keeps ordinary updates synchronous and empty batches inert", function(): ()
+		local value = ui.value(1)
+		local seen: { number } = {}
+		local stop = ui.effect(function(): () table.insert(seen, value()) end)
+		ui.batch(function(): () end)
+		expect(seen).toEqual({ 1 })
+		value(2)
+		expect(seen).toEqual({ 1, 2 })
+		stop()
+	end)
+
 	it("reads, writes, and observes values", function(): ()
 		local count = reactive.value(1)
 		local seen: { number } = {}
