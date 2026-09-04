@@ -28,9 +28,9 @@ jobs:
       - name: Check version
         shell: bash
         run: |
-          package_version="$(awk -F '"' '/^version = / { print $2; exit }' wally.toml)"
+          package_version="$(awk -F '"' '/^version = / { print $2; exit }' pesde.toml)"
           if [[ "v${package_version}" != "${RELEASE_TAG}" ]]; then
-            echo "Tag ${RELEASE_TAG} does not match wally.toml version ${package_version}." >&2
+            echo "Tag ${RELEASE_TAG} does not match pesde.toml version ${package_version}." >&2
             exit 1
           fi
           echo "PACKAGE_VERSION=${package_version}" >> "${GITHUB_ENV}"
@@ -44,7 +44,7 @@ jobs:
         run: rokit install --no-trust-check
 
       - name: Install package dependencies
-        run: wally install
+        run: pesde install --locked
 
       - name: Build Roblox model
         run: rojo build release.project.json --output ui-${PACKAGE_VERSION}.rbxm

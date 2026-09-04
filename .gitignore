@@ -8,6 +8,8 @@
 sourcemap.json
 /.lest
 /Packages
+/roblox_packages
+/.pesde
 /temp
 /build
 /node_modules

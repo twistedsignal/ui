@@ -23,7 +23,7 @@ function Tween.new<T>(input: Types.Reactive<T>, info: TweenInfo?): Types.Readonl
 
 	local cleanup = Source.observe(input, function(nextTarget: T): ()
 		if not output then output = Value.new(nextTarget); target = nextTarget; return end
-		const currentOutput = output :: Types.Value<T>
+		local currentOutput = output :: Types.Value<T>
 		local from = currentOutput()
 		target = nextTarget
 		generation += 1
@@ -54,7 +54,7 @@ function Tween.new<T>(input: Types.Reactive<T>, info: TweenInfo?): Types.Readonl
 		end)
 	end)
 	assert(output, "ui.tween: source did not synchronously produce an initial value")
-	const currentOutput = output :: Types.Value<T>
+	local currentOutput = output :: Types.Value<T>
 	local readonly = Value.readonly(function(): T return currentOutput() end, currentOutput.observable)
 	Metadata.set(readonly, {
 		snap = function(): ()

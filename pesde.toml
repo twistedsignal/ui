@@ -1,0 +1,50 @@
+name = "twistedsignal/ui"
+version = "0.5.0"
+description = "Reactive state, animation, and bindings for existing Roblox UI"
+authors = ["ivadsiuls <ivadsiuls@proton.me>"]
+repository = "https://github.com/twistedsignal/ui"
+license = "MIT"
+includes = [
+    "pesde.toml",
+    "README.md",
+    "LICENSE",
+    "docs/**/*.md",
+    "src/Rx.luau",
+    "src/ui/init.luau",
+    "src/ui/binding/bind.luau",
+    "src/ui/reactive/Adapters.luau",
+    "src/ui/reactive/Derive.luau",
+    "src/ui/reactive/Effect.luau",
+    "src/ui/reactive/FromObservable.luau",
+    "src/ui/reactive/Input.luau",
+    "src/ui/reactive/Observable.luau",
+    "src/ui/reactive/Owner.luau",
+    "src/ui/reactive/Scheduler.luau",
+    "src/ui/reactive/Tracking.luau",
+    "src/ui/reactive/Types.luau",
+    "src/ui/reactive/Value.luau",
+    "src/ui/reactive/init.luau",
+    "src/ui/motion/Easing.luau",
+    "src/ui/motion/Interpolate.luau",
+    "src/ui/motion/Metadata.luau",
+    "src/ui/motion/Scheduler.luau",
+    "src/ui/motion/Source.luau",
+    "src/ui/motion/Spring.luau",
+    "src/ui/motion/SpringObject.luau",
+    "src/ui/motion/Tween.luau",
+    "src/ui/motion/init.luau",
+]
+
+[target]
+environment = "roblox"
+lib = "src/ui/init.luau"
+build_files = ["src"]
+
+[indices]
+default = "https://github.com/pesde-pkg/index"
+
+[wally_indices]
+default = "https://github.com/UpliftGames/wally-index"
+
+[dependencies]
+Rx = { wally = "nightcycle/rx", version = "^3.7.3" }

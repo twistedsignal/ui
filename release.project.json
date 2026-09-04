@@ -12,10 +12,7 @@
     "Packages": {
       "$className": "Folder",
       "Rx": {
-        "$path": "Packages/Rx.lua"
-      },
-      "_Index": {
-        "$path": "Packages/_Index"
+        "$path": "roblox_packages/Rx.luau"
       }
     }
   }

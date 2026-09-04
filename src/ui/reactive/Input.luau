@@ -13,7 +13,7 @@ function Input.isValue(value: unknown): boolean
 	if type(value) ~= "table" then
 		return false
 	end
-	const candidate = value :: { [string]: unknown }
+	local candidate = value :: { [string]: unknown }
 	return type(candidate.observable) == "table"
 end
 

@@ -7,10 +7,7 @@
         "$path": "src/ui"
       },
       "Rx": {
-        "$path": "Packages/Rx.lua"
-      },
-      "_Index": {
-        "$path": "Packages/_Index"
+        "$path": "roblox_packages/Rx.luau"
       }
     },
     "Workspace": {

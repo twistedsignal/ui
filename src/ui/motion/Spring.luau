@@ -11,7 +11,7 @@ export type Config = { frequency: number?, damping: number?, initial: unknown? }
 local Spring = {}
 
 function Spring.new<T>(input: Types.Reactive<T>, config: Config?): Types.ReadonlyValue<T>
-	const options: Config = config or {}
+	local options: Config = config or {}
 	local backend: SpringObject.SpringObject<T>? = nil
 	local output: Types.Value<T>? = nil
 	local springSubscription: Types.Subscription? = nil
@@ -24,7 +24,7 @@ function Spring.new<T>(input: Types.Reactive<T>, config: Config?): Types.Readonl
 		if not backend then
 			local initial = if options.initial ~= nil then options.initial :: T else target
 			backend = SpringObject.new(initial, speed, options.damping)
-			const initializedBackend = backend :: SpringObject.SpringObject<T>
+			local initializedBackend = backend :: SpringObject.SpringObject<T>
 			initializedBackend:SetEpsilon(epsilon)
 			output = Value.new(initial)
 			springSubscription = initializedBackend:Observe():Subscribe(function(value: T): ()
@@ -36,8 +36,8 @@ function Spring.new<T>(input: Types.Reactive<T>, config: Config?): Types.Readonl
 		(backend :: SpringObject.SpringObject<T>):SetTarget(target)
 	end)
 	assert(output, "ui.spring: source did not synchronously produce an initial value")
-	const currentOutput = output :: Types.Value<T>
-	const currentBackend = backend :: SpringObject.SpringObject<T>
+	local currentOutput = output :: Types.Value<T>
+	local currentBackend = backend :: SpringObject.SpringObject<T>
 	local readonly = Value.readonly(function(): T return currentOutput() end, currentOutput.observable)
 	Metadata.set(readonly, {
 		impulse = function(amount: unknown): () currentBackend:Impulse(amount :: T) end,

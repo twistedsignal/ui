@@ -9,18 +9,17 @@ It does not create Instances or render a component tree.
 
 ## Install
 
-Add the package to `wally.toml`:
+Add the package with Pesde:
 
-```toml
-[dependencies]
-ui = "twistedsignal/ui@0.2.1"
+```sh
+pesde add twistedsignal/ui
 ```
 
-Run `wally install`, then map the generated `Packages` directory into your Rojo
-project. Require the package from the mapped location:
+Map the generated `roblox_packages` directory into your Rojo project, then require
+the package from the mapped location:
 
 ```lua
-local ui = require(ReplicatedStorage.Packages.ui)
+local ui = require(ReplicatedStorage.roblox_packages.ui)
 ```
 
 ## Bind existing UI

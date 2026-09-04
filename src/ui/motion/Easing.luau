@@ -38,7 +38,7 @@ function Easing.cubicBezier(x1: number, y1: number, x2: number, y2: number): Eas
 		local low: number = 0
 		local high: number = 1
 		for _index: number = 1, 10 do
-			const estimate: number = component(t, x1, x2)
+			local estimate: number = component(t, x1, x2)
 			if math.abs(estimate - x) <= 1e-7 then
 				break
 			end

@@ -1,7 +1,7 @@
 --!strict
 
-const Spring = require("@self/Spring")
-const Tween = require("@self/Tween")
+local Spring = require("@self/Spring")
+local Tween = require("@self/Tween")
 
 export type SpringConfig = Spring.Config
 

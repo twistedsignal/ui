@@ -1,8 +1,8 @@
 --!strict
 
-const bind = require("@self/binding/bind")
-const motion = require("@self/motion")
-const reactive = require("@self/reactive")
+local bind = require("@self/binding/bind")
+local motion = require("@self/motion")
+local reactive = require("@self/reactive")
 
 --[=[
 	@class ui

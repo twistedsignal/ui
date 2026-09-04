@@ -4,7 +4,7 @@ Install [Rokit](https://github.com/rojo-rbx/rokit), then prepare the repository:
 
 ```sh
 rokit install
-wally install
+pesde install
 lest
 rojo build dev.project.json -o ui.rbxlx
 ```
