@@ -1,5 +1,5 @@
 name = "twistedsignal/ui"
-version = "0.5.0"
+version = "0.5.1"
 description = "Reactive state, animation, and bindings for existing Roblox UI"
 authors = ["ivadsiuls <ivadsiuls@proton.me>"]
 repository = "https://github.com/twistedsignal/ui"

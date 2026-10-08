@@ -225,6 +225,9 @@ end
 		return self._speed
 	elseif key == "Damper" then
 		return self._damper
+	elseif string.sub(key, 1, 1) == "_" then
+		-- Nil-valued private fields are absent from the instance table.
+		return nil
 	end
 	error(`{key} is not a member of SpringObject`, 2)
 end
